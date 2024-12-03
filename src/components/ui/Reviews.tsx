@@ -160,8 +160,8 @@ export default function ReviewsTab() {
         <div className="flex justify-center items-center h-screen">
           <h1 className="text-xl md:text-xl lg:text-xl font-bold tracking-tight">
             {selectedRating === "all"
-              ? "Watch Vero work its magic. Reviews coming soon! 🚀"
-              : `No ${selectedRating}-star reviews posted with Vero.`}
+              ? "Watch Talk. work its magic. Reviews coming soon! 🚀"
+              : `No ${selectedRating}-star reviews posted with Talk..`}
           </h1>
         </div>
       )}

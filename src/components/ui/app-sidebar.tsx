@@ -55,7 +55,7 @@ const navItems = [
     show: true,
   },
   { icon: Logs, label: "Tasks List", href: "/tasks", show: false },
-  { icon: LetterText, label: "Forms", href: "/typeform", show: false },
+  { icon: LetterText, label: "Forms", href: "/typeform", show: true },
   {
     icon: Route,
     label: "Customer Journey",

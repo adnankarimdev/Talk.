@@ -9,7 +9,7 @@ export default function DashboardRoute() {
       <div className="container mx-auto p-4">
         <GradualSpacing
           className="text-2xl font-bold mb-4 text-center"
-          text="Vero Review Platform Settings"
+          text="Talk. Review Platform Settings"
         />
         <ClientSettings />
       </div>

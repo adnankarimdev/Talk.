@@ -123,7 +123,7 @@ export default function Dashboard() {
       <div className="container mx-auto p-4">
         <GradualSpacing
           className="text-2xl font-bold mb-4 text-center"
-          text="Vero Dashboard"
+          text="Talk. Dashboard"
         />
         <Summary
           averageRating={averageRating}

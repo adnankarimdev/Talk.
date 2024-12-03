@@ -298,7 +298,7 @@ export default function CustomerJourney() {
         <div className="flex items-center justify-center w-full">
           <p className="text-center">
             {
-              "You can start viewing customer journeys once a signed up Vero user leaves reviews for you! 🤗"
+              "You can start viewing customer journeys once a signed up Talk. user leaves reviews for you! 🤗"
             }
           </p>
         </div>

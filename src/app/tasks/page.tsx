@@ -171,7 +171,7 @@ export default function TaskPage() {
           <div className="flex items-center justify-between space-y-2 mb-4">
             <GradualSpacing
               className="text-2xl font-bold text-center"
-              text="Vero Tasks"
+              text="Talk. Tasks"
             />
             <div className="flex space-x-2">
               <Badge

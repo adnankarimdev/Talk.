@@ -235,7 +235,7 @@ export default function ReviewsClassic({
     //         <CardHeader>
     //           <CardTitle className="flex items-center justify-center">
     //             <span className="flex items-center text-md font-semibold justify-center">
-    //               Watch Vero work its magic. Reviews coming soon! 🚀
+    //               Watch Talk. work its magic. Reviews coming soon! 🚀
     //             </span>
     //           </CardTitle>
     //         </CardHeader>

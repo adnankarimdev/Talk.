@@ -255,7 +255,7 @@ export default function BusinessTemplate() {
                 </div>
               </div>
               <div className="mt-8">
-                <p>Powered by Vero</p>
+                <p>Powered by Talk.</p>
               </div>
             </div>
           </footer>

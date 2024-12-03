@@ -773,7 +773,7 @@ export default function ClientSettings() {
                             Personalized Website
                           </Label>
                           <p className="text-gray-500 text-xs">
-                            Powered by Vero
+                            Powered by Talk.
                           </p>
                           <div className="flex items-center space-x-2">
                             <Button
@@ -1000,7 +1000,7 @@ export default function ClientSettings() {
                         <div className="mt-2">
                           <p className="text-gray-500 text-xs">
                             {
-                              "Specify the complimentary items you'd like to offer, which will be shown on the vero homepage."
+                              "Specify the complimentary items you'd like to offer, which will be shown on the Talk. homepage."
                             }
                           </p>
                           <Input

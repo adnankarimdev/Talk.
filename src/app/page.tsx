@@ -45,25 +45,25 @@ import TypingAnimation from "@/components/ui/typing-animation";
 const slides = [
   {
     src: "/HomepageImages/dash-1.png?height=400&width=800&text=Slide1",
-    alt: "Vero workspace illustration 1",
+    alt: "Talk. workspace illustration 1",
     label: "Dashboard",
     icon: LayoutDashboardIcon,
   },
   {
     src: "/HomepageImages/customer-journey-1.png?height=400&width=800&text=Slide2",
-    alt: "Vero workspace illustration 2",
+    alt: "Talk. workspace illustration 2",
     label: "Customer Journey",
     icon: Route,
   },
   {
     src: "/HomepageImages/reviews-1.png?height=400&width=800&text=Slide3",
-    alt: "Vero workspace illustration 3",
+    alt: "Talk. workspace illustration 3",
     label: "Reviews",
     icon: StarIcon,
   },
   {
     src: "/HomepageImages/badges.png?height=400&width=800&text=Slide4",
-    alt: "Vero workspace illustration 4",
+    alt: "Talk. workspace illustration 4",
     label: "Badges",
     icon: BadgeCheck,
   },
@@ -72,43 +72,43 @@ const slides = [
 const customerSlides = [
   {
     src: "/HomepageImages/customer-1.png?height=400&width=800&text=Slide1",
-    alt: "Vero workspace illustration 1",
+    alt: "Talk. workspace illustration 1",
     label: "Select",
     icon: BadgePlus,
   },
   {
     src: "/HomepageImages/customer-2.png?height=400&width=800&text=Slide2",
-    alt: "Vero workspace illustration 2",
+    alt: "Talk. workspace illustration 2",
     label: "Route",
     icon: Route,
   },
   {
     src: "/HomepageImages/customer-3.png?height=400&width=800&text=Slide3",
-    alt: "Vero workspace illustration 3",
+    alt: "Talk. workspace illustration 3",
     label: "Build",
     icon: HammerIcon,
   },
   {
     src: "/HomepageImages/customer-4.png?height=400&width=800&text=Slide4",
-    alt: "Vero workspace illustration 4",
+    alt: "Talk. workspace illustration 4",
     label: "Post",
     icon: FaGoogle,
   },
   {
     src: "/HomepageImages/customer-7.png?height=400&width=800&text=Slide4",
-    alt: "Vero workspace illustration 5",
+    alt: "Talk. workspace illustration 5",
     label: "Later",
     icon: Clock,
   },
   {
     src: "/HomepageImages/customer-5.png?height=400&width=800&text=Slide3",
-    alt: "Vero workspace illustration 6",
+    alt: "Talk. workspace illustration 6",
     label: "Detect",
     icon: BadgeMinus,
   },
   {
     src: "/HomepageImages/customer-6.png?height=400&width=800&text=Slide4",
-    alt: "Vero workspace illustration 7",
+    alt: "Talk. workspace illustration 7",
     label: "Shield",
     icon: Shield,
   },
@@ -176,7 +176,7 @@ const LandingPage = () => {
         >
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <Link className="flex items-center justify-center" href="/">
-              <span className="text-2xl font-bold text-gray-900">Vero</span>
+              <span className="text-2xl font-bold text-gray-900">Talk.</span>
             </Link>
             <nav className="hidden md:flex space-x-8">
               <DropdownMenu
@@ -325,7 +325,7 @@ const LandingPage = () => {
                   size="lg"
                   onClick={() =>
                     window.open(
-                      "https://calendly.com/adnan-karim-vero-io/vero-demo",
+                      "https://calendly.com/adnan-karim-Talk.-io/Talk.-demo",
                       "_blank"
                     )
                   }
@@ -374,7 +374,7 @@ const LandingPage = () => {
                   size="lg"
                   onClick={() =>
                     window.open(
-                      "https://calendly.com/adnan-karim-vero-io/vero-demo",
+                      "https://calendly.com/adnan-karim-Talk.-io/Talk.-demo",
                       "_blank"
                     )
                   }
@@ -389,7 +389,7 @@ const LandingPage = () => {
             <div className="container mx-auto px-4">
               <div className="max-w-3xl mx-auto text-center">
                 <h2 className="text-3xl font-bold mb-6">
-                  Vero is looking for early adopters
+                  Talk. is looking for early adopters
                 </h2>
                 <Button variant="default" size="lg" onClick={onGetStarted}>
                   Get started
@@ -402,7 +402,7 @@ const LandingPage = () => {
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="flex items-center mb-4 md:mb-0">
-                <span className="text-xl font-bold text-gray-900">Vero</span>
+                <span className="text-xl font-bold text-gray-900">Talk.</span>
               </div>
               <nav className="flex flex-wrap justify-center md:justify-end gap-6">
                 <Link
@@ -432,7 +432,7 @@ const LandingPage = () => {
               </nav>
             </div>
             <div className="mt-8 text-center text-sm text-gray-500">
-              © {new Date().getFullYear()} Vero. All rights reserved.
+              © {new Date().getFullYear()} Talk.. All rights reserved.
             </div>
           </div>
         </footer>

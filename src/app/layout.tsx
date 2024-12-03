@@ -10,7 +10,7 @@ const staatliches = Staatliches({
 });
 
 export const metadata: Metadata = {
-  title: "Vero",
+  title: "Talk.",
   description: "Instant Insights.",
 };
 

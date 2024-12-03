@@ -225,7 +225,7 @@ export default function Onboarding() {
       .then((response) => {
         toast({
           title: "Success",
-          description: "Settings Updated. Welcome to Vero",
+          description: "Settings Updated. Welcome to Talk.",
           duration: 1000,
         });
         setTimeout(() => {

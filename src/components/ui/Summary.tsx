@@ -448,7 +448,7 @@ export default function SummaryTab({
               decimalPlaces={1}
             />
             <StatCard
-              title="Total Reviews with Vero"
+              title="Total Reviews with Talk."
               value={totalReviewsWithVero}
               icon={<Sigma className="h-4 w-4 text-muted-foreground" />}
             />
@@ -563,7 +563,7 @@ export default function SummaryTab({
     {topCustomers.length != 0 && (
       <Card>
       <CardHeader>
-        <CardTitle>Top 5 Vero Customers</CardTitle>
+        <CardTitle>Top 5 Talk. Customers</CardTitle>
         <CardDescription>
           Based on the number of times visited
         </CardDescription>
