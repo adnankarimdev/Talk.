@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { Button } from "@/components/ui/button"
+import axios from 'axios'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
     Sheet,
@@ -32,7 +33,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import { RealTimeTypeForm } from './RealTimeForm'
-import { AlignLeft, ListOrdered, CheckSquare, Calendar, Trash2, GripVertical } from 'lucide-react'
+import { AlignLeft, ListOrdered, CheckSquare, Calendar, Trash2, GripVertical, Loader2 } from 'lucide-react'
 import ShinyButton from '../shiny-button'
 import AnimatedSaveIcon from '../AnimatedIcons/AnimatedSaveIcon'
 
@@ -46,6 +47,7 @@ type Question = {
 export default function TypeformCreator() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [openRealTime, setOpenRealTime] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const questionTypes = [
     { type: 'text', icon: AlignLeft, label: 'Text' },
@@ -84,6 +86,20 @@ export default function TypeformCreator() {
 
   const handleSave =  async () =>
   {
+    setIsLoading(true)
+    console.log(questions)
+    //axios call to backend here to save form data.
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/backend/save-form-data/`,
+        {data:questions},
+      );
+      console.log(response.data.content);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
 
   }
 
@@ -233,9 +249,18 @@ export default function TypeformCreator() {
   </SheetContent>
 </Sheet>
 
+
+{isLoading ? (
+          <Button variant="outline" className="absolute bottom-4 right-4">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            </Button>
+        ) : (
 <Button onClick={handleSave} variant="outline" className="absolute bottom-4 right-4">
           <AnimatedSaveIcon />
         </Button>
+        )}
+        
+
         
 </div>
     </div>
