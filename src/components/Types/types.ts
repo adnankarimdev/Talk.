@@ -1,4 +1,6 @@
 import { flattenedIconMap } from "@/utils/IconList";
+export type QuestionType = 'text' | 'multiple_choice' | 'checkbox' | 'date';
+
 export type KeywordCounts = {
   [key: string]: number;
 };
