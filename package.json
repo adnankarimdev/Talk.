@@ -1,11 +1,12 @@
 {
-  "name": "dashboard-reviews",
+  "name": "talk.",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start:port": "npm run start -- -p 5200",
     "prodClone": "npm run build && npm run start -- -p 4000",
     "lint": "next lint",
     "format": "npx prettier --write ."

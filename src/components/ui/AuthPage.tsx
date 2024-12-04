@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,17 +20,14 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, LucideProps } from "lucide-react";
-import { FaGoogle } from "react-icons/fa";
 import axios from "axios";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "./use-toast";
 import { useRouter } from "next/navigation";
 
 export default function AuthPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [buisnessName, setBuisnessName] = useState("");
-  const [accountType, setAccountType] = useState("google-business");
   const { toast } = useToast();
   const router = useRouter();
 
@@ -55,13 +54,15 @@ export default function AuthPage() {
         password: password,
       })
       .then((response) => {
-        localStorage.setItem("authToken", response.data.token);
         localStorage.setItem("userEmail", email);
-        localStorage.setItem("accountType", response.data.account_type);
-        sessionStorage.setItem("authToken", response.data.token);
+        sessionStorage.setItem("authToken", response.data.user.id);
+        sessionStorage.setItem(
+          "stripe_customer_id",
+          response.data.user.stripe_customer_id,
+        );
         toast({
           title: "Successfully Logged In",
-          description: "Welcome to Talk..",
+          description: "Welcome back 👋",
           duration: 1000,
         });
         setTimeout(() => {
@@ -76,45 +77,57 @@ export default function AuthPage() {
         });
       });
   };
+
   const handleSignUp = () => {
-    // TODO: add valdiation steps here
-    // For now, we'll save the number of locations as 1.
-    // Eventually, we'll need to set up the backend to select the number of locations based on pricing.
+    // Basic validation for email and password
+    if (!email || !password) {
+      toast({
+        title: "Error",
+        description: "Please provide both email and password.",
+        duration: 1000,
+      });
+      return;
+    }
+
+    // Make the signup request to the Django backend
     axios
       .post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/backend/sign-up/`, {
         email: email,
         password: password,
-        business_name: buisnessName,
-        account_type: accountType,
       })
       .then((response) => {
         toast({
-          title: "User Created",
-          description: "Welcome to Talk..",
+          title: "Account Created",
+          description: "Welcome! 🎉",
           duration: 1000,
         });
-        localStorage.setItem("userEmail", email);
-        localStorage.setItem("accountType", accountType);
-        sessionStorage.setItem("authToken", response.data.token);
+
+        // Store the auth token (if returned)
+        sessionStorage.setItem("authToken", response.data.user.id);
+        sessionStorage.setItem(
+          "stripe_customer_id",
+          response.data.user.stripe_customer_id,
+        );
+
+        // Navigate to home or onboarding page
         setTimeout(() => {
-          if (accountType == "google-business") {
-            router.push("/placefinder");
-          }
-          if (accountType == "online-business" || accountType == "influencer") {
-            router.push("/socialsignup");
-          }
+          router.push("/dashboard");
         }, 2000);
       })
       .catch((error) => {
+        console.error(error); // Log the error for debugging
         toast({
-          title: "Failed to sign up.",
-          description: "It's not you, it's us. Please try again.",
+          title: "Signup Failed",
+          description:
+            error.response?.data?.message ||
+            "Something went wrong. Please try again.",
           duration: 1000,
         });
       });
   };
+
   return (
-    <Card className="w-[350px]">
+    <Card className="w-[350px] ">
       <CardHeader>
         <CardTitle>Authentication</CardTitle>
         <CardDescription>Sign up or log in to your account</CardDescription>
@@ -174,37 +187,6 @@ export default function AuthPage() {
             <form onSubmit={onSubmit}>
               <div className="grid gap-2">
                 <div className="grid gap-1">
-                  <Label className="mt-2" htmlFor="account-select">
-                    Account Type
-                  </Label>
-                  <Select
-                    onValueChange={setAccountType}
-                    defaultValue={accountType}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select an Account Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {accountTypeOptions.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Label className="mt-2" htmlFor="email">
-                    {accountType === "influencer" ? "Name" : "Buisness Name"}
-                  </Label>
-                  <Input
-                    id="buisnessName"
-                    value={buisnessName}
-                    onChange={(e) => setBuisnessName(e.target.value)}
-                    placeholder="Phil & Sebastian"
-                    type="text"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    disabled={isLoading}
-                  />
                   <Label className="mt-2" htmlFor="email">
                     Email
                   </Label>

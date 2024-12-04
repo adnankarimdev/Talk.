@@ -52,9 +52,9 @@ const navItems = [
     icon: MonitorCog,
     label: "Platform Settings",
     href: "/settings",
-    show: true,
+    show: false,
   },
-  { icon: Logs, label: "Tasks List", href: "/tasks", show: false },
+  { icon: Logs, label: "Tasks List", href: "/tasks", show: true },
   { icon: LetterText, label: "Forms", href: "/typeform", show: true },
   {
     icon: Route,
@@ -64,14 +64,14 @@ const navItems = [
   },
   //Hiding Messenger for now, won't release to public just yet.
   { icon: MessageCircle, label: "Messenger", href: "/messenger", show: false },
-  { icon: Star, label: "Customer Feedback", href: "/reviews", show: true },
+  { icon: Star, label: "Customer Feedback", href: "/reviews", show: false },
   {
     icon: GiSpiderWeb,
     label: "Website Creator",
     href: "/website-creator",
     show: false,
   },
-  { icon: Reply, label: "Respond", href: "/respond", show: true },
+  { icon: Reply, label: "Respond", href: "/respond", show: false },
   { icon: LogOut, label: "Logout", href: "/", show: true },
 ];
 
