@@ -17,8 +17,7 @@ Personality:
 
 `;
 
-export const formCollectionInstructions = 
-`
+export const formCollectionInstructions = `
 Tool use: enabled.
 # Indirect Form Answer Extraction Prompt
 
@@ -81,4 +80,4 @@ Execute this information gathering with maximum subtlety, empathy, and conversat
 Here is the form in json:
 <FORM_DATA>
 
-`
+`;

@@ -100,19 +100,16 @@ export default function GooglePlacesAutocomplete(): JSX.Element {
             if (inputRef.current) {
               inputRef.current.value = "";
             }
-          }
-          catch (error: any) {
+          } catch (error: any) {
             // Handle and throw the error explicitly
-            console.log(error.response.data.error)
+            console.log(error.response.data.error);
             toast({
               title: error.response.data.error,
               duration: 3000,
               variant: "destructive",
             });
-            return
+            return;
           }
-
-
         });
       }
     };

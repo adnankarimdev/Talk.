@@ -25,7 +25,7 @@ import {
   BadgePlus,
   Logs,
   Speaker,
-  LetterText
+  LetterText,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -81,7 +81,7 @@ export function AppSidebar() {
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userEmail");
-    sessionStorage.removeItem("authToken")
+    sessionStorage.removeItem("authToken");
     router.push("/");
   };
 
@@ -90,7 +90,7 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <div className="mb-2">
-            <Logo size={24}/>
+            <Logo size={24} />
           </div>
           <SidebarGroupContent>
             <SidebarMenu>

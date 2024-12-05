@@ -3,10 +3,7 @@ interface VeroLogoProps {
   color?: string;
 }
 
-export default function Logo({
-  size = 50,
-  color = "black",
-}: VeroLogoProps) {
+export default function Logo({ size = 50, color = "black" }: VeroLogoProps) {
   return (
     <svg
       width={size}

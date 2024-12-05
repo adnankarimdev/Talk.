@@ -1,19 +1,19 @@
-import React from 'react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { AlignLeft, ListOrdered, CheckSquare, Calendar } from 'lucide-react'
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { AlignLeft, ListOrdered, CheckSquare, Calendar } from "lucide-react";
 
 type SidebarProps = {
-  onAddQuestion: (type: string) => void
-}
+  onAddQuestion: (type: string) => void;
+};
 
 export function Sidebar({ onAddQuestion }: SidebarProps) {
   const questionTypes = [
-    { type: 'text', icon: AlignLeft, label: 'Text' },
-    { type: 'multiple_choice', icon: ListOrdered, label: 'Multiple Choice' },
-    { type: 'checkbox', icon: CheckSquare, label: 'Checkbox' },
-    { type: 'date', icon: Calendar, label: 'Date' },
-  ]
+    { type: "text", icon: AlignLeft, label: "Text" },
+    { type: "multiple_choice", icon: ListOrdered, label: "Multiple Choice" },
+    { type: "checkbox", icon: CheckSquare, label: "Checkbox" },
+    { type: "date", icon: Calendar, label: "Date" },
+  ];
 
   return (
     <aside className="w-64 bg-white p-6 shadow-md">
@@ -35,6 +35,5 @@ export function Sidebar({ onAddQuestion }: SidebarProps) {
         ))}
       </div>
     </aside>
-  )
+  );
 }
-

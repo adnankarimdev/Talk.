@@ -58,7 +58,7 @@ export default function AuthPage() {
         sessionStorage.setItem("authToken", response.data.user.id);
         sessionStorage.setItem(
           "stripe_customer_id",
-          response.data.user.stripe_customer_id,
+          response.data.user.stripe_customer_id
         );
         toast({
           title: "Successfully Logged In",
@@ -106,7 +106,7 @@ export default function AuthPage() {
         sessionStorage.setItem("authToken", response.data.user.id);
         sessionStorage.setItem(
           "stripe_customer_id",
-          response.data.user.stripe_customer_id,
+          response.data.user.stripe_customer_id
         );
 
         // Navigate to home or onboarding page

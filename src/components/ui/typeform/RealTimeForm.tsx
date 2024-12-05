@@ -9,31 +9,34 @@
  * You can run it with `npm run relay`, in parallel with `npm start`
  */
 const LOCAL_RELAY_SERVER_URL: string =
-  process.env.REACT_APP_LOCAL_RELAY_SERVER_URL || '';
+  process.env.REACT_APP_LOCAL_RELAY_SERVER_URL || "";
 
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback, useState } from "react";
 
-import { RealtimeClient } from '@openai/realtime-api-beta';
-import axios from 'axios';
-import { ItemType } from '@openai/realtime-api-beta/dist/lib/client.js';
-import { WavRecorder, WavStreamPlayer } from '@/lib/wavtools/index.js';
+import { RealtimeClient } from "@openai/realtime-api-beta";
+import axios from "axios";
+import { ItemType } from "@openai/realtime-api-beta/dist/lib/client.js";
+import { WavRecorder, WavStreamPlayer } from "@/lib/wavtools/index.js";
 import { useToast } from "@/components/ui/use-toast";
-import { formCollectionInstructions, instructions } from '@/utils/conversation_config.js';
+import {
+  formCollectionInstructions,
+  instructions,
+} from "@/utils/conversation_config.js";
 import { useRouter } from "next/navigation";
-import { Question } from '@/components/Types/types';
-import { WavRenderer } from '@/utils/wav_renderer';
+import { Question } from "@/components/Types/types";
+import { WavRenderer } from "@/utils/wav_renderer";
 
-import { X, Edit, Zap, ArrowUp, ArrowDown } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Toggle } from '@/components/ui/toggle';
+import { X, Edit, Zap, ArrowUp, ArrowDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Toggle } from "@/components/ui/toggle";
 
 // import './ConsolePage.scss';
-import { isJsxOpeningLikeElement } from 'typescript';
-import { strict } from 'assert';
-import { Label } from '../label';
-import VoiceGridVisualization from '../real-time/VoiceGridVisualization';
-import { Switch } from '../switch';
-import { CustomerReviewInfoFromSerializer } from '@/components/Types/types';
+import { isJsxOpeningLikeElement } from "typescript";
+import { strict } from "assert";
+import { Label } from "../label";
+import VoiceGridVisualization from "../real-time/VoiceGridVisualization";
+import { Switch } from "../switch";
+import { CustomerReviewInfoFromSerializer } from "@/components/Types/types";
 
 /**
  * Type for result from get_weather() function call
@@ -57,7 +60,7 @@ interface Coordinates {
  */
 interface RealtimeEvent {
   time: string;
-  source: 'client' | 'server';
+  source: "client" | "server";
   count?: number;
   event: { [key: string]: any };
 }
@@ -65,33 +68,47 @@ interface RealtimeEvent {
 interface QuestionsProps {
   questions: Question[];
   setQuestions: React.Dispatch<React.SetStateAction<Question[]>>;
-  onCheckboxChange?: (questionId: string, option: string, checked: boolean) => void;
+  onCheckboxChange?: (
+    questionId: string,
+    option: string,
+    checked: boolean
+  ) => void;
   answers?: Record<string, string | string[]>;
-  setAnswers: React.Dispatch<React.SetStateAction<Record<string, string | string[]>>>;
+  setAnswers: React.Dispatch<
+    React.SetStateAction<Record<string, string | string[]>>
+  >;
 }
 
-export function RealTimeTypeForm({questions, setQuestions, answers, setAnswers}: QuestionsProps) {
+export function RealTimeTypeForm({
+  questions,
+  setQuestions,
+  answers,
+  setAnswers,
+}: QuestionsProps) {
   /**
    * Ask user for API Key
    * If we're using the local relay server, we don't need this
    */
-  const [isVAD, setIsVAD] = useState(false)
-  const [clientFrequencies, setClientFrequencies] = useState<any>(new Float32Array([0]))
+  const [isVAD, setIsVAD] = useState(false);
+  const [clientFrequencies, setClientFrequencies] = useState<any>(
+    new Float32Array([0])
+  );
   const router = useRouter();
   const { toast } = useToast();
-  const [serverFrequencies, setServerFrequencies] = useState<any>(new Float32Array([0]))
-
+  const [serverFrequencies, setServerFrequencies] = useState<any>(
+    new Float32Array([0])
+  );
 
   const handleToggle = () => {
-    setIsVAD((prev) => !prev)
-    const newValue = !isVAD ? 'server_vad' : 'none'
-    changeTurnEndType(newValue)
-    console.log("Turn end type changed to:", newValue)
+    setIsVAD((prev) => !prev);
+    const newValue = !isVAD ? "server_vad" : "none";
+    changeTurnEndType(newValue);
+    console.log("Turn end type changed to:", newValue);
     // You can add any additional logic here
-  }
+  };
 
   // to do- set open ai key immediately.
-  const apiKey = "sk-proj-BkqMCfMCu8aJz0M19aj9T3BlbkFJCqFGN85AiM1NP2lJyrF1"
+  const apiKey = "sk-proj-BkqMCfMCu8aJz0M19aj9T3BlbkFJCqFGN85AiM1NP2lJyrF1";
 
   /**
    * Instantiate:
@@ -162,9 +179,9 @@ export function RealTimeTypeForm({questions, setQuestions, answers, setAnswers}:
     const s = Math.floor(delta / 1000) % 60;
     const m = Math.floor(delta / 60_000) % 60;
     const pad = (n: number) => {
-      let s = n + '';
+      let s = n + "";
       while (s.length < 2) {
-        s = '0' + s;
+        s = "0" + s;
       }
       return s;
     };
@@ -175,10 +192,10 @@ export function RealTimeTypeForm({questions, setQuestions, answers, setAnswers}:
    * When you click the API key
    */
   const resetAPIKey = useCallback(() => {
-    const apiKey = prompt('OpenAI API Key');
+    const apiKey = prompt("OpenAI API Key");
     if (apiKey !== null) {
       localStorage.clear();
-      localStorage.setItem('tmp::voice_api_key', apiKey);
+      localStorage.setItem("tmp::voice_api_key", apiKey);
       window.location.reload();
     }
   }, []);
@@ -214,7 +231,7 @@ export function RealTimeTypeForm({questions, setQuestions, answers, setAnswers}:
       },
     ]);
 
-    if (client.getTurnDetectionType() === 'server_vad') {
+    if (client.getTurnDetectionType() === "server_vad") {
       await wavRecorder.record((data) => client.appendInputAudio(data.mono));
     }
   }, []);
@@ -282,16 +299,16 @@ export function RealTimeTypeForm({questions, setQuestions, answers, setAnswers}:
   const changeTurnEndType = async (value: string) => {
     const client = clientRef.current;
     const wavRecorder = wavRecorderRef.current;
-    if (value === 'none' && wavRecorder.getStatus() === 'recording') {
+    if (value === "none" && wavRecorder.getStatus() === "recording") {
       await wavRecorder.pause();
     }
     client.updateSession({
-      turn_detection: value === 'none' ? null : { type: 'server_vad' },
+      turn_detection: value === "none" ? null : { type: "server_vad" },
     });
-    if (value === 'server_vad' && client.isConnected()) {
+    if (value === "server_vad" && client.isConnected()) {
       await wavRecorder.record((data) => client.appendInputAudio(data.mono));
     }
-    setCanPushToTalk(value === 'none');
+    setCanPushToTalk(value === "none");
   };
 
   /**
@@ -314,7 +331,7 @@ export function RealTimeTypeForm({questions, setQuestions, answers, setAnswers}:
    */
   useEffect(() => {
     const conversationEls = [].slice.call(
-      document.body.querySelectorAll('[data-conversation-content]')
+      document.body.querySelectorAll("[data-conversation-content]")
     );
     for (const el of conversationEls) {
       const conversationEl = el as HTMLDivElement;
@@ -322,36 +339,35 @@ export function RealTimeTypeForm({questions, setQuestions, answers, setAnswers}:
     }
   }, [items]);
 
-
   useEffect(() => {
     let isLoaded = true;
-  
+
     const wavRecorder = wavRecorderRef.current;
     const wavStreamPlayer = wavStreamPlayerRef.current;
-  
+
     const render = () => {
       if (!isLoaded) return;
-  
+
       // Fetch client frequencies
       const clientFrequencies = wavRecorder?.recording
-        ? wavRecorder.getFrequencies('voice')
+        ? wavRecorder.getFrequencies("voice")
         : { values: new Float32Array([0]) };
-  
+
       // Fetch server frequencies
       const serverFrequencies = wavStreamPlayer?.analyser
-        ? wavStreamPlayer.getFrequencies('voice')
+        ? wavStreamPlayer.getFrequencies("voice")
         : { values: new Float32Array([0]) };
-  
+
       // Update state for the visualization components
       setClientFrequencies(clientFrequencies.values); // Update state with values only
       setServerFrequencies(serverFrequencies.values); // Update state with values only
-  
+
       // Schedule the next animation frame
       window.requestAnimationFrame(render);
     };
-  
+
     render();
-  
+
     return () => {
       isLoaded = false; // Clean up when the component unmounts
     };
@@ -378,17 +394,17 @@ export function RealTimeTypeForm({questions, setQuestions, answers, setAnswers}:
             clientCanvas.width = clientCanvas.offsetWidth;
             clientCanvas.height = clientCanvas.offsetHeight;
           }
-          clientCtx = clientCtx || clientCanvas.getContext('2d');
+          clientCtx = clientCtx || clientCanvas.getContext("2d");
           if (clientCtx) {
             clientCtx.clearRect(0, 0, clientCanvas.width, clientCanvas.height);
             const result = wavRecorder.recording
-              ? wavRecorder.getFrequencies('voice')
+              ? wavRecorder.getFrequencies("voice")
               : { values: new Float32Array([0]) };
             WavRenderer.drawBars(
               clientCanvas,
               clientCtx,
               result.values,
-              '#0099ff',
+              "#0099ff",
               10,
               0,
               8
@@ -400,17 +416,17 @@ export function RealTimeTypeForm({questions, setQuestions, answers, setAnswers}:
             serverCanvas.width = serverCanvas.offsetWidth;
             serverCanvas.height = serverCanvas.offsetHeight;
           }
-          serverCtx = serverCtx || serverCanvas.getContext('2d');
+          serverCtx = serverCtx || serverCanvas.getContext("2d");
           if (serverCtx) {
             serverCtx.clearRect(0, 0, serverCanvas.width, serverCanvas.height);
             const result = wavStreamPlayer.analyser
-              ? wavStreamPlayer.getFrequencies('voice')
+              ? wavStreamPlayer.getFrequencies("voice")
               : { values: new Float32Array([0]) };
             WavRenderer.drawBars(
               serverCanvas,
               serverCtx,
               result.values,
-              '#009900',
+              "#009900",
               10,
               0,
               8
@@ -427,13 +443,12 @@ export function RealTimeTypeForm({questions, setQuestions, answers, setAnswers}:
     };
   }, []);
 
-
-
-type RatingToBadges = {
-  [key: number]: string[]; // Adjust the value type as needed
-};
+  type RatingToBadges = {
+    [key: number]: string[]; // Adjust the value type as needed
+  };
   const [placeIds, setPlaceIds] = useState([]);
-  const [ratingToBadgesData, setRatingsToBadgesData] = useState<RatingToBadges>()
+  const [ratingToBadgesData, setRatingsToBadgesData] =
+    useState<RatingToBadges>();
   const [reviews, setReviews] = useState<CustomerReviewInfoFromSerializer[]>(
     []
   );
@@ -469,7 +484,6 @@ type RatingToBadges = {
   useEffect(() => {
     const fetchData = async () => {
       try {
-
       } catch (err) {
         console.error(err);
         false;
@@ -493,39 +507,41 @@ Tool use: enabled.
 
 You are to help the user create forms. Make use of the tools provided to you whenever you can. You are to only help the user assist in building forms and nothing else.
 Reject all other sorts of inquiries that are not related to building the form.
-    `
+    `;
 
     // Set instructions
     const formattedQuestions = questions
-  .map((q) => `ID: ${q.id}\nContent: ${q.content}`)
-  .join("\n\n");
-    client.updateSession({ instructions: formCollectionInstructions +  formattedQuestions});
-    client.updateSession({ voice: 'ash' });
+      .map((q) => `ID: ${q.id}\nContent: ${q.content}`)
+      .join("\n\n");
+    client.updateSession({
+      instructions: formCollectionInstructions + formattedQuestions,
+    });
+    client.updateSession({ voice: "ash" });
     // Set transcription, otherwise we don't get user transcriptions back
     // client.updateSession({ input_audio_transcription: { model: 'whisper-1' } });
 
     // Add tools
     client.addTool(
       {
-        name: 'finalize_conversation',
-        description: 'Finalizes the conversation and performs cleanup actions.',
+        name: "finalize_conversation",
+        description: "Finalizes the conversation and performs cleanup actions.",
         parameters: {
-          type: 'object',
+          type: "object",
           properties: {
             reason: {
-              type: 'string',
-              description: 'The reason for ending the conversation.',
+              type: "string",
+              description: "The reason for ending the conversation.",
             },
           },
-          required: ['reason'],
+          required: ["reason"],
         },
       },
       async ({ reason }: { reason: string }) => {
         console.log(`Conversation finalized: ${reason}`);
-        
+
         // Call the disconnect function to clean up the session
         disconnectConversation();
-        
+
         return {
           success: true,
           message: `Conversation ended successfully: ${reason}`,
@@ -535,21 +551,22 @@ Reject all other sorts of inquiries that are not related to building the form.
 
     client.addTool(
       {
-        name: 'update_answer',
-        description: 'Updates an answer by its question ID.',
+        name: "update_answer",
+        description: "Updates an answer by its question ID.",
         parameters: {
-          type: 'object',
+          type: "object",
           properties: {
             questionId: {
-              type: 'string',
-              description: 'The unique identifier of the question to update the answer for.',
+              type: "string",
+              description:
+                "The unique identifier of the question to update the answer for.",
             },
             value: {
-              type: 'string',
-              description: 'The updated answer value.',
+              type: "string",
+              description: "The updated answer value.",
             },
           },
-          required: ['questionId', 'value'],
+          required: ["questionId", "value"],
         },
       },
       async ({ questionId, value }: { questionId: string; value: string }) => {
@@ -557,7 +574,7 @@ Reject all other sorts of inquiries that are not related to building the form.
           ...prev,
           [questionId]: value,
         }));
-    
+
         return {
           success: true,
           updatedAnswer: { questionId, value },
@@ -567,22 +584,22 @@ Reject all other sorts of inquiries that are not related to building the form.
 
     client.addTool(
       {
-        name: 'set_memory',
-        description: 'Saves important data about the user into memory.',
+        name: "set_memory",
+        description: "Saves important data about the user into memory.",
         parameters: {
-          type: 'object',
+          type: "object",
           properties: {
             key: {
-              type: 'string',
+              type: "string",
               description:
-                'The key of the memory value. Always use lowercase and underscores, no other characters.',
+                "The key of the memory value. Always use lowercase and underscores, no other characters.",
             },
             value: {
-              type: 'string',
-              description: 'Value can be anything represented as a string',
+              type: "string",
+              description: "Value can be anything represented as a string",
             },
           },
-          required: ['key', 'value'],
+          required: ["key", "value"],
         },
       },
       async ({ key, value }: { [key: string]: any }) => {
@@ -596,66 +613,66 @@ Reject all other sorts of inquiries that are not related to building the form.
     );
     client.addTool(
       {
-        name: 'collect_user_info',
+        name: "collect_user_info",
         description:
-          'Collects personal information including name, email, and birthday from a form submission.',
+          "Collects personal information including name, email, and birthday from a form submission.",
         parameters: {
-          type: 'object',
-          strict:true,
+          type: "object",
+          strict: true,
           properties: {
             name: {
-              type: 'string',
-              description: 'Full name of the user.',
+              type: "string",
+              description: "Full name of the user.",
             },
             email: {
-              type: 'string',
-              description: 'Email address of the user.',
+              type: "string",
+              description: "Email address of the user.",
             },
             birthday: {
-              type: 'string',
-              format: 'date',
-              description: 'Birthday of the user in YYYY-MM-DD format.',
+              type: "string",
+              format: "date",
+              description: "Birthday of the user in YYYY-MM-DD format.",
             },
           },
-          required: ['name', 'email', 'birthday'],
+          required: ["name", "email", "birthday"],
         },
       },
       async ({ name, email, birthday }: { [key: string]: any }) => {
         // Validate the input fields
         if (!name || !email || !birthday) {
-          throw new Error('All fields (name, email, birthday) are required.');
+          throw new Error("All fields (name, email, birthday) are required.");
         }
-    
+
         // Basic validation example
         if (!/^\S+@\S+\.\S+$/.test(email)) {
-          throw new Error('Invalid email format.');
+          throw new Error("Invalid email format.");
         }
         if (!/^\d{4}-\d{2}-\d{2}$/.test(birthday)) {
-          throw new Error('Invalid birthday format. Use YYYY-MM-DD.');
+          throw new Error("Invalid birthday format. Use YYYY-MM-DD.");
         }
-    
+
         // Simulate saving data or performing an operation
         const userInfo = {
           name,
           email,
           birthday,
         };
-    
-        console.log('User information collected:', userInfo);
-    
+
+        console.log("User information collected:", userInfo);
+
         // You can replace this with a database save or API call
         return {
-          message: 'User information collected successfully.',
+          message: "User information collected successfully.",
           data: userInfo,
         };
       }
     );
     client.addTool(
       {
-        name: 'move_to_dashboard',
-        description: 'Redirects the user to the dashboard page.',
+        name: "move_to_dashboard",
+        description: "Redirects the user to the dashboard page.",
         parameters: {
-          type: 'object',
+          type: "object",
           properties: {},
         },
       },
@@ -663,9 +680,9 @@ Reject all other sorts of inquiries that are not related to building the form.
         // Redirects to the dashboard
         router.push("/login");
       }
-    ); 
+    );
     // handle realtime events from client + server for event logging
-    client.on('realtime.event', (realtimeEvent: RealtimeEvent) => {
+    client.on("realtime.event", (realtimeEvent: RealtimeEvent) => {
       setRealtimeEvents((realtimeEvents) => {
         const lastEvent = realtimeEvents[realtimeEvents.length - 1];
         if (lastEvent?.event.type === realtimeEvent.event.type) {
@@ -677,20 +694,20 @@ Reject all other sorts of inquiries that are not related to building the form.
         }
       });
     });
-    client.on('error', (event: any) => console.error(event));
-    client.on('conversation.interrupted', async () => {
+    client.on("error", (event: any) => console.error(event));
+    client.on("conversation.interrupted", async () => {
       const trackSampleOffset = await wavStreamPlayer.interrupt();
       if (trackSampleOffset?.trackId) {
         const { trackId, offset } = trackSampleOffset;
         await client.cancelResponse(trackId, offset);
       }
     });
-    client.on('conversation.updated', async ({ item, delta }: any) => {
+    client.on("conversation.updated", async ({ item, delta }: any) => {
       const items = client.conversation.getItems();
       if (delta?.audio) {
         wavStreamPlayer.add16BitPCM(delta.audio, item.id);
       }
-      if (item.status === 'completed' && item.formatted.audio?.length) {
+      if (item.status === "completed" && item.formatted.audio?.length) {
         const wavFile = await WavRecorder.decode(
           item.formatted.audio,
           24000,
@@ -734,38 +751,44 @@ Reject all other sorts of inquiries that are not related to building the form.
           </div>
         </div>
         <div className="content-main">
-              <div className="visualization flex justify-center">
-                  {/* <div className="visualization-entry">
+          <div className="visualization flex justify-center">
+            {/* <div className="visualization-entry">
                     <h2 className="text-center text-white mb-2">Client</h2>
                     <VoiceGridVisualization type="client" frequencyData={clientFrequencies} canvasRef={clientCanvasRef}/>
                   </div> */}
-                  <div className="visualization-entry">
-                    <h2 className="text-center text-black mb-2">Server</h2>
-                    <VoiceGridVisualization type="server" frequencyData={serverFrequencies} canvasRef={serverCanvasRef}/>
-                  </div>
-              </div>
+            <div className="visualization-entry">
+              <h2 className="text-center text-black mb-2">Server</h2>
+              <VoiceGridVisualization
+                type="server"
+                frequencyData={serverFrequencies}
+                canvasRef={serverCanvasRef}
+              />
+            </div>
+          </div>
           <div className="content-actions flex justify-center gap-4">
             {isConnected && canPushToTalk && (
               <Button
                 disabled={!isConnected || !canPushToTalk}
                 onMouseDown={startRecording}
                 onMouseUp={stopRecording}
-                className='mt-10'
+                className="mt-10"
               >
-                {isRecording ? 'Release to send' : 'Push to talk'}
+                {isRecording ? "Release to send" : "Push to talk"}
               </Button>
             )}
             <Button
-              onClick={isConnected ? disconnectConversation : connectConversation}
-              className='mt-10'
+              onClick={
+                isConnected ? disconnectConversation : connectConversation
+              }
+              className="mt-10"
             >
-              {isConnected ? 'Disconnect' : 'Connect'}
+              {isConnected ? "Disconnect" : "Connect"}
             </Button>
           </div>
         </div>
       </div>
       {/* <div className="border p-4 overflow-auto"> */}
-        {/* <div className="content-block conversation">
+      {/* <div className="content-block conversation">
           <div className="content-block-title font-bold mb-2">Conversation</div>
           <div className="content-block-body" data-conversation-content>
             {!items.length && `Awaiting connection...`}

@@ -1,29 +1,29 @@
-import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Checkbox } from "@/components/ui/checkbox"
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type FormPreviewProps = {
   question: {
-    id: string
-    type: string
-    content: string
-  }
-}
+    id: string;
+    type: string;
+    content: string;
+  };
+};
 
 export function FormPreview({ question }: FormPreviewProps) {
   const renderQuestionContent = () => {
     switch (question.type) {
-      case 'text':
+      case "text":
         return (
           <div className="space-y-2">
             <Label htmlFor={question.id}>{question.content}</Label>
             <Input id={question.id} placeholder="Type your answer here..." />
           </div>
-        )
-      case 'multiple_choice':
+        );
+      case "multiple_choice":
         return (
           <div className="space-y-2">
             <Label>{question.content}</Label>
@@ -38,8 +38,8 @@ export function FormPreview({ question }: FormPreviewProps) {
               </div>
             </RadioGroup>
           </div>
-        )
-      case 'checkbox':
+        );
+      case "checkbox":
         return (
           <div className="space-y-2">
             <Label>{question.content}</Label>
@@ -54,18 +54,18 @@ export function FormPreview({ question }: FormPreviewProps) {
               </div>
             </div>
           </div>
-        )
-      case 'date':
+        );
+      case "date":
         return (
           <div className="space-y-2">
             <Label htmlFor={question.id}>{question.content}</Label>
             <Input id={question.id} type="date" />
           </div>
-        )
+        );
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <Card>
@@ -74,6 +74,5 @@ export function FormPreview({ question }: FormPreviewProps) {
       </CardHeader>
       <CardContent>{renderQuestionContent()}</CardContent>
     </Card>
-  )
+  );
 }
-

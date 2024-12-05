@@ -8,9 +8,7 @@ type LayoutProps = {
 export default function AutoRespondLayout({ children }: LayoutProps) {
   return (
     <div className="flex">
-        <main className="flex-1 p-4">
-          {children}
-        </main>
+      <main className="flex-1 p-4">{children}</main>
     </div>
   );
 }
