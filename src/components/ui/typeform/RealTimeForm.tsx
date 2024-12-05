@@ -18,7 +18,7 @@ import axios from 'axios';
 import { ItemType } from '@openai/realtime-api-beta/dist/lib/client.js';
 import { WavRecorder, WavStreamPlayer } from '@/lib/wavtools/index.js';
 import { useToast } from "@/components/ui/use-toast";
-import { instructions } from '@/utils/conversation_config.js';
+import { formCollectionInstructions, instructions } from '@/utils/conversation_config.js';
 import { useRouter } from "next/navigation";
 import { Question } from '@/components/Types/types';
 import { WavRenderer } from '@/utils/wav_renderer';
@@ -65,9 +65,12 @@ interface RealtimeEvent {
 interface QuestionsProps {
   questions: Question[];
   setQuestions: React.Dispatch<React.SetStateAction<Question[]>>;
+  onCheckboxChange?: (questionId: string, option: string, checked: boolean) => void;
+  answers?: Record<string, string | string[]>;
+  setAnswers: React.Dispatch<React.SetStateAction<Record<string, string | string[]>>>;
 }
 
-export function RealTimeTypeForm({questions, setQuestions}: QuestionsProps) {
+export function RealTimeTypeForm({questions, setQuestions, answers, setAnswers}: QuestionsProps) {
   /**
    * Ask user for API Key
    * If we're using the local relay server, we don't need this
@@ -88,14 +91,7 @@ export function RealTimeTypeForm({questions, setQuestions}: QuestionsProps) {
   }
 
   // to do- set open ai key immediately.
-  const apiKey = LOCAL_RELAY_SERVER_URL
-    ? ''
-    : localStorage.getItem('tmp::voice_api_key') ||
-      prompt('OpenAI API Key') ||
-      '';
-  if (apiKey !== '') {
-    localStorage.setItem('tmp::voice_api_key', apiKey);
-  }
+  const apiKey = "sk-proj-BkqMCfMCu8aJz0M19aj9T3BlbkFJCqFGN85AiM1NP2lJyrF1"
 
   /**
    * Instantiate:
@@ -302,16 +298,6 @@ export function RealTimeTypeForm({questions, setQuestions}: QuestionsProps) {
    * Auto-scroll the event logs
    */
   useEffect(() => {
-    const email = sessionStorage.getItem("authToken");
-    if (!email) {
-      toast({
-        title: "Please sign in.",
-        duration: 3000,
-      });
-      router.push("/login");
-      console.error("Email not found in localStorage");
-      return;
-    }
     if (eventsScrollRef.current) {
       const eventsEl = eventsScrollRef.current;
       const scrollHeight = eventsEl.scrollHeight;
@@ -510,7 +496,10 @@ Reject all other sorts of inquiries that are not related to building the form.
     `
 
     // Set instructions
-    client.updateSession({ instructions: localInstructions });
+    const formattedQuestions = questions
+  .map((q) => `ID: ${q.id}\nContent: ${q.content}`)
+  .join("\n\n");
+    client.updateSession({ instructions: formCollectionInstructions +  formattedQuestions});
     client.updateSession({ voice: 'ash' });
     // Set transcription, otherwise we don't get user transcriptions back
     // client.updateSession({ input_audio_transcription: { model: 'whisper-1' } });
@@ -518,303 +507,64 @@ Reject all other sorts of inquiries that are not related to building the form.
     // Add tools
     client.addTool(
       {
-        name: 'add_question',
-        description: 'Adds a new question to the list of questions.',
+        name: 'finalize_conversation',
+        description: 'Finalizes the conversation and performs cleanup actions.',
         parameters: {
           type: 'object',
           properties: {
-            type: {
+            reason: {
               type: 'string',
-              description:
-                'The type of the question. It can be "text", "multiple_choice", "checkbox", or "date".',
+              description: 'The reason for ending the conversation.',
             },
           },
-          required: ['type'],
+          required: ['reason'],
         },
       },
-      async ({ type }: { type: string }) => {
-        const newQuestion: Question = {
-          id: `question-${Date.now()}`,
-          type,
-          content: `New ${type} question`,
-          options: type === 'multiple_choice' || type === 'checkbox' ? ['Option 1', 'Option 2'] : undefined,
+      async ({ reason }: { reason: string }) => {
+        console.log(`Conversation finalized: ${reason}`);
+        
+        // Call the disconnect function to clean up the session
+        disconnectConversation();
+        
+        return {
+          success: true,
+          message: `Conversation ended successfully: ${reason}`,
         };
-        setQuestions((questions) => [...questions, newQuestion]);
-        return { success: true, question: newQuestion };
       }
     );
 
     client.addTool(
       {
-        name: 'update_question',
-        description: 'Updates a question by its ID.',
-        parameters: {
-          type: 'object',
-          properties: {
-            id: {
-              type: 'string',
-              description: 'The unique identifier of the question to update.',
-            },
-            updates: {
-              type: 'object',
-              description: 'The properties to update on the question.',
-              additionalProperties: true,
-            },
-          },
-          required: ['id', 'updates'],
-        },
-      },
-      async ({ id, updates }: { id: string; updates: Partial<Question> }) => {
-        setQuestions((questions) =>
-          questions.map((q) => (q.id === id ? { ...q, ...updates } : q))
-        );
-        return { success: true, updatedQuestion: { id, updates } };
-      }
-    );
-
-
-    client.addTool(
-      {
-        name: 'update_question_options',
-        description: 'Updates the options for a multiple-choice or checkbox question based on user input.',
+        name: 'update_answer',
+        description: 'Updates an answer by its question ID.',
         parameters: {
           type: 'object',
           properties: {
             questionId: {
               type: 'string',
-              description: 'The unique ID of the question to update.',
+              description: 'The unique identifier of the question to update the answer for.',
             },
-            options: {
+            value: {
               type: 'string',
-              description: 'The updated options as a single string where each option is separated by a newline.',
+              description: 'The updated answer value.',
             },
           },
-          required: ['questionId', 'options'],
+          required: ['questionId', 'value'],
         },
       },
-      async ({ questionId, options }: { questionId: string; options: string }) => {
-        const updatedOptions = options.split('\n');
-        setQuestions((prevQuestions) =>
-          prevQuestions.map((q) =>
-            q.id === questionId ? { ...q, options: updatedOptions } : q
-          )
-        );
-        return { success: true, updatedOptions };
-      }
-    );
-
-    client.addTool(
-      {
-        name: 'update_question_content',
-        description: 'Updates the content of a question based on user input.',
-        parameters: {
-          type: 'object',
-          properties: {
-            questionId: {
-              type: 'string',
-              description: 'The unique ID of the question to update.',
-            },
-            content: {
-              type: 'string',
-              description: 'The updated content for the question.',
-            },
-          },
-          required: ['questionId', 'content'],
-        },
-      },
-      async ({ questionId, content }: { questionId: string; content: string }) => {
-        setQuestions((prevQuestions) =>
-          prevQuestions.map((q) =>
-            q.id === questionId ? { ...q, content } : q
-          )
-        );
-        return { success: true, updatedContent: content };
-      }
-    );
+      async ({ questionId, value }: { questionId: string; value: string }) => {
+        setAnswers((prev) => ({
+          ...prev,
+          [questionId]: value,
+        }));
     
-    client.addTool(
-      {
-        name: 'remove_question',
-        description: 'Removes a question by its ID.',
-        parameters: {
-          type: 'object',
-          properties: {
-            id: {
-              type: 'string',
-              description: 'The unique identifier of the question to remove.',
-            },
-          },
-          required: ['id'],
-        },
-      },
-      async ({ id }: { id: string }) => {
-        setQuestions((questions) => questions.filter((q) => q.id !== id));
-        return { success: true, removedQuestionId: id };
+        return {
+          success: true,
+          updatedAnswer: { questionId, value },
+        };
       }
     );
 
-    client.addTool(
-      {
-        name: 'render_question_content',
-        description: 'Renders the content of a question based on its type.',
-        parameters: {
-          type: 'object',
-          properties: {
-            question: {
-              type: 'object',
-              description: 'The question object to render.',
-              properties: {
-                id: { type: 'string', description: 'The unique identifier of the question.' },
-                type: {
-                  type: 'string',
-                  description: 'The type of the question. It can be "text", "multiple_choice", "checkbox", or "date".',
-                },
-                content: { type: 'string', description: 'The question content.' },
-                options: {
-                  type: 'array',
-                  items: { type: 'string' },
-                  description: 'Options for multiple-choice or checkbox questions.',
-                },
-              },
-              required: ['id', 'type', 'content'],
-            },
-          },
-          required: ['question'],
-        },
-      },
-      async ({ question }: { question: Question }) => {
-        switch (question.type) {
-          case 'text':
-            return `<div>
-                      <label for="${question.id}">${question.content}</label>
-                      <input id="${question.id}" placeholder="Type your answer here..." />
-                    </div>`;
-          case 'multiple_choice':
-            return `<div>
-                      <label>${question.content}</label>
-                      ${question.options
-                        ?.map(
-                          (option, index) =>
-                            `<div>
-                               <input type="radio" id="${question.id}-option${index + 1}" name="${question.id}" />
-                               <label for="${question.id}-option${index + 1}">${option}</label>
-                             </div>`
-                        )
-                        .join('')}
-                    </div>`;
-          case 'checkbox':
-            return `<div>
-                      <label>${question.content}</label>
-                      ${question.options
-                        ?.map(
-                          (option, index) =>
-                            `<div>
-                               <input type="checkbox" id="${question.id}-checkbox${index + 1}" />
-                               <label for="${question.id}-checkbox${index + 1}">${option}</label>
-                             </div>`
-                        )
-                        .join('')}
-                    </div>`;
-          case 'date':
-            return `<div>
-                      <label for="${question.id}">${question.content}</label>
-                      <input id="${question.id}" type="date" />
-                    </div>`;
-          default:
-            return null;
-        }
-      }
-    );
-
-    client.addTool(
-      {
-        name: 'speak_with_badges',
-        description: 'Sends user input to the backend and retrieves badges based on the rating.',
-        parameters: {
-          type: 'object',
-          properties: {
-            selectedRating: {
-              type: 'number',
-              description: 'The selected rating, used to fetch the corresponding badges.',
-            },
-            userInput: {
-              type: 'string',
-              description: 'The message input from the user for which badges are fetched.',
-            },
-          },
-          required: ['selectedRating', 'userInput'],
-        },
-      },
-      async ({ selectedRating, userInput }:{selectedRating:number, userInput:string}) => {
-        try {
-          const email = sessionStorage.getItem("authToken");
-          if (!email) {
-            toast({
-              title: "Please sign in.",
-              duration: 3000,
-            });
-            router.push("/login");
-            console.error("Email not found in localStorage");
-            return;
-          }
-  
-          // First, fetch the placeId
-          const placeIdResponse = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/backend/get-place-id-by-email/`,
-            {
-              headers: {
-                Authorization: `Bearer ${email}`,
-              },
-            }
-          );
-          setPlaceIds(placeIdResponse.data.placeIds);
-  
-          const placeIdsAsArray = placeIdResponse.data.places.map(
-            (place: any) => place.place_id
-          );
-          const placeIdsQuery = placeIdsAsArray.join(",");
-  
-          const reviewSettingsResponse = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/backend/get-review-settings/${placeIdsQuery}/`
-          );
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/backend/get-reviews-by-client-ids/`,
-            {
-              params: {
-                clientIds: placeIdsAsArray,
-              },
-            }
-          );
-          const data = response.data as CustomerReviewInfoFromSerializer[];
-          const updatedReviews = data.map((review) => {
-            // Convert badges JSON string to array or empty array if invalid
-            const badgesArray = review.badges ? JSON.parse(review.badges) : [];
-            return {
-              ...review,
-              badges: Array.isArray(badgesArray) ? badgesArray : [],
-              internal_google_key_words: findKeywordsInReview(
-                review.final_review_body,
-                reviewSettingsResponse.data.keywords
-              ),
-            };
-          });
-          setReviews(updatedReviews.reverse() as any);
-          setRatingsToBadgesData(ratingToBadges(updatedReviews));
-          const newData = ratingToBadges(updatedReviews)
-          const newResponse = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/backend/chat-with-badges/`,
-            {
-              context: newData[selectedRating],
-              inputMessage: userInput,
-            }
-          );
-          return newResponse.data; // Return the response from the backend.
-        } catch (error) {
-          console.error('Error in chat_with_badges tool:', error);
-          return { error: 'Failed to fetch badges.' }; // Handle any error that occurs during the request.
-        }
-      }
-    );
     client.addTool(
       {
         name: 'set_memory',

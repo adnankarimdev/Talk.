@@ -140,12 +140,14 @@ export default function CustomerForms() {
     </form>
           <Sheet open={openRealTime} onOpenChange={setOpenRealTime}>
           <SheetTrigger>
-          <ShinyButton className="absolute top-4 right-4 px-4 py-2 rounded" >Build with Voice</ShinyButton>
+          <ShinyButton className="absolute top-4 right-4 px-4 py-2 rounded" >Answer with Voice</ShinyButton>
           </SheetTrigger>
           <SheetContent>
           <RealTimeTypeForm 
           questions={questions} 
           setQuestions={setQuestions} 
+          answers={answers}
+          setAnswers={setAnswers}
           />
           </SheetContent>
         </Sheet>
