@@ -1,49 +1,28 @@
-"use client";
+"use client"
 
-import React, { useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Button } from "@/components/ui/button";
-import axios from "axios";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState } from "react"
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
+import { Button } from "@/components/ui/button"
+import axios from "axios"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Sheet,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
-import { RealTimeTypeForm } from "./RealTimeForm";
-import {
-  AlignLeft,
-  ListOrdered,
-  CheckSquare,
-  Calendar,
-  Trash2,
-  GripVertical,
-  Loader2,
-} from "lucide-react";
-import ShinyButton from "../shiny-button";
-import AnimatedSaveIcon from "../AnimatedIcons/AnimatedSaveIcon";
+} from "@/components/ui/sheet"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Textarea } from "@/components/ui/textarea"
+import { RealTimeTypeForm } from "./RealTimeForm"
+import { AlignLeft, ListOrdered, CheckSquare, Calendar, Trash2, GripVertical, Loader2 } from 'lucide-react'
+import ShinyButton from "../shiny-button"
+import AnimatedSaveIcon from "../AnimatedIcons/AnimatedSaveIcon"
+import { FormTemplates } from "./form-templates"
 
 type Question = {
   id: string;
@@ -56,6 +35,7 @@ export default function TypeformCreator() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [openRealTime, setOpenRealTime] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false)
 
   const questionTypes = [
     { type: "text", icon: AlignLeft, label: "Text" },
@@ -170,6 +150,12 @@ export default function TypeformCreator() {
     }
   };
 
+
+  const handleSelectTemplate = (templateQuestions: Question[]) => {
+    setQuestions(templateQuestions)
+    setShowTemplates(false)
+  }
+
   return (
     <div className="flex h-screen ">
       <aside className="w-64 bg-white p-6 shadow-md">
@@ -190,9 +176,19 @@ export default function TypeformCreator() {
             </Card>
           ))}
         </div>
+        <Button
+          className="w-full mt-4"
+          onClick={() => setShowTemplates(true)}
+        >
+          Use Template
+        </Button>
       </aside>
       <main className="flex-1 p-6 overflow-auto">
-        <DragDropContext onDragEnd={onDragEnd}>
+
+      {showTemplates ? (
+          <FormTemplates onSelectTemplate={handleSelectTemplate} />
+        ) : (
+          <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="questions">
             {(provided) => (
               <div
@@ -286,21 +282,11 @@ export default function TypeformCreator() {
             )}
           </Droppable>
         </DragDropContext>
+        )}
+
+
       </main>
       <div>
-        <Sheet open={openRealTime} onOpenChange={setOpenRealTime}>
-          <SheetTrigger>
-            <ShinyButton className="absolute top-4 right-4 px-4 py-2 rounded">
-              Build with Voice
-            </ShinyButton>
-          </SheetTrigger>
-          <SheetContent>
-            <RealTimeTypeForm
-              questions={questions}
-              setQuestions={setQuestions}
-            />
-          </SheetContent>
-        </Sheet>
 
         {isLoading ? (
           <Button variant="outline" className="absolute bottom-4 right-4">

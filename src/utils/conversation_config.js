@@ -19,6 +19,8 @@ Personality:
 
 export const formCollectionInstructions = `
 Tool use: enabled.
+
+You can assume that the user has already been to this location,website, service, etc
 # Indirect Form Answer Extraction Prompt
 
 ## Objective

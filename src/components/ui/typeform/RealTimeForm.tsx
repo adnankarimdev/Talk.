@@ -77,6 +77,7 @@ interface QuestionsProps {
   setAnswers: React.Dispatch<
     React.SetStateAction<Record<string, string | string[]>>
   >;
+  handleSubmit: (realtimeAnswers:any) => Promise<void>;
 }
 
 export function RealTimeTypeForm({
@@ -84,6 +85,7 @@ export function RealTimeTypeForm({
   setQuestions,
   answers,
   setAnswers,
+  handleSubmit,
 }: QuestionsProps) {
   /**
    * Ask user for API Key
@@ -98,6 +100,8 @@ export function RealTimeTypeForm({
   const [serverFrequencies, setServerFrequencies] = useState<any>(
     new Float32Array([0])
   );
+
+  const nonUseStateAnswers: any = {};
 
   const handleToggle = () => {
     setIsVAD((prev) => !prev);
@@ -541,6 +545,8 @@ Reject all other sorts of inquiries that are not related to building the form.
 
         // Call the disconnect function to clean up the session
         disconnectConversation();
+        handleSubmit(nonUseStateAnswers)
+        nonUseStateAnswers.length = 0;
 
         return {
           success: true,
@@ -574,6 +580,7 @@ Reject all other sorts of inquiries that are not related to building the form.
           ...prev,
           [questionId]: value,
         }));
+        nonUseStateAnswers[questionId] = value;
 
         return {
           success: true,
@@ -609,76 +616,6 @@ Reject all other sorts of inquiries that are not related to building the form.
           return newKv;
         });
         return { ok: true };
-      }
-    );
-    client.addTool(
-      {
-        name: "collect_user_info",
-        description:
-          "Collects personal information including name, email, and birthday from a form submission.",
-        parameters: {
-          type: "object",
-          strict: true,
-          properties: {
-            name: {
-              type: "string",
-              description: "Full name of the user.",
-            },
-            email: {
-              type: "string",
-              description: "Email address of the user.",
-            },
-            birthday: {
-              type: "string",
-              format: "date",
-              description: "Birthday of the user in YYYY-MM-DD format.",
-            },
-          },
-          required: ["name", "email", "birthday"],
-        },
-      },
-      async ({ name, email, birthday }: { [key: string]: any }) => {
-        // Validate the input fields
-        if (!name || !email || !birthday) {
-          throw new Error("All fields (name, email, birthday) are required.");
-        }
-
-        // Basic validation example
-        if (!/^\S+@\S+\.\S+$/.test(email)) {
-          throw new Error("Invalid email format.");
-        }
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(birthday)) {
-          throw new Error("Invalid birthday format. Use YYYY-MM-DD.");
-        }
-
-        // Simulate saving data or performing an operation
-        const userInfo = {
-          name,
-          email,
-          birthday,
-        };
-
-        console.log("User information collected:", userInfo);
-
-        // You can replace this with a database save or API call
-        return {
-          message: "User information collected successfully.",
-          data: userInfo,
-        };
-      }
-    );
-    client.addTool(
-      {
-        name: "move_to_dashboard",
-        description: "Redirects the user to the dashboard page.",
-        parameters: {
-          type: "object",
-          properties: {},
-        },
-      },
-      async () => {
-        // Redirects to the dashboard
-        router.push("/login");
       }
     );
     // handle realtime events from client + server for event logging
