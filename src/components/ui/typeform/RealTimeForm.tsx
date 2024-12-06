@@ -576,6 +576,7 @@ Reject all other sorts of inquiries that are not related to building the form.
         },
       },
       async ({ questionId, value }: { questionId: string; value: string }) => {
+        console.log("called update answer")
         setAnswers((prev) => ({
           ...prev,
           [questionId]: value,

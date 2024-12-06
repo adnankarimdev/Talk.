@@ -3,7 +3,10 @@
 import React, { useState } from "react"
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
 import { Button } from "@/components/ui/button"
+import { v4 as uuidv4 } from 'uuid';
+import { useToast } from "../use-toast"
 import axios from "axios"
+import useSessionId from "@/hooks/useSessionId";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Sheet,
@@ -36,6 +39,9 @@ export default function TypeformCreator() {
   const [openRealTime, setOpenRealTime] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false)
+  const { toast } = useToast();
+  const { sessionId } = useSessionId();
+  const [formId, setFormId] = useState("")
 
   const questionTypes = [
     { type: "text", icon: AlignLeft, label: "Text" },
@@ -56,7 +62,7 @@ export default function TypeformCreator() {
 
   const addQuestion = (type: string) => {
     const newQuestion: Question = {
-      id: `question-${Date.now()}`,
+      id: uuidv4().toString(),
       type,
       content: `New ${type} question`,
       options:
@@ -81,12 +87,29 @@ export default function TypeformCreator() {
     setIsLoading(true);
     console.log(questions);
     //axios call to backend here to save form data.
+    let localFormId = ""
     try {
+      if (formId === "")
+      {
+        localFormId = uuidv4().toString()
+        setFormId(localFormId)
+      }
+      else
+      {
+        localFormId = formId
+      }
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/backend/save-form-data/`,
-        { data: questions }
+        { data: questions, userId: sessionId, formId:localFormId }
       );
       console.log(response.data.content);
+      toast({
+        title: "Form Saved",
+      });
+    // Add a delay of 2 seconds (2000 milliseconds) before reloading
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
     } catch (error) {
       console.error(error);
     } finally {
